@@ -2,7 +2,9 @@
 title: "Dynamic Spatiotemporal ARCH Models"
 author: "Philipp Otto, Osman Dogan, Suleyman Taspinar"
 format: html
-editor: visual
+project:
+  type: website
+  output-dir: docs
 ---
 
 ## Dynamic spatiotemporal ARCH models
@@ -36,7 +38,7 @@ for $i=1,2,\ldots,n$ and $t=1,\ldots T$. The spatial locations indexed by $i = 1
 
 ## Functions for simulation and estimation
 
-Notice that the toy examples to show how the functions can be used is provided in the next section.
+Note that the examples showing how the functions can be used are in the next section.
 
 ```{r}
 #| code-fold: true
