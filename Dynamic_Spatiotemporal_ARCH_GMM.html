@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Philipp Otto, Osman Dogan, Suleyman Taspinar">
+
+<title>Dynamic Spatiotemporal ARCH Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/quarto-html/quarto.js"></script>
+<script src="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/quarto-html/popper.min.js"></script>
+<script src="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Dynamic_Spatiotemporal_ARCH_GMM_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Dynamic Spatiotemporal ARCH Models</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Philipp Otto, Osman Dogan, Suleyman Taspinar </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="dynamic-spatiotemporal-arch-models" class="level2">
+<h2 class="anchored" data-anchor-id="dynamic-spatiotemporal-arch-models">Dynamic spatiotemporal ARCH models</h2>
+<p>Code used in:<br>
+Dynamic Spatiotemporal ARCH Models (arXiv:2202.13856)<br>
+Philipp Otto, Osman Dogan, Suleyman Taspinar</p>
+<p>Including a toy example how to use the code.</p>
+<p>We especially thank Jihai Yu for sharing the MATLAB code used in:<br>
+Efficient GMM estimation of spatial dynamic panel data models with fixed effects<br>
+Lung-Fei Lee and Jihai Yu<br>
+Journal of Econometrics 180(2), 174-197.</p>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Geo-referenced data are characterised by an inherent spatial dependence due to the geographical proximity. In this paper, we introduce a dynamic spatiotemporal autoregressive conditional heteroscedasticity (ARCH) process to describe the effects of (i) the log-squared time-lagged outcome variable, i.e., the temporal effect, (ii) the spatial lag of the log-squared outcome variable, i.e., the spatial effect, and (iii) the spatial lag of the log-squared time-lagged outcome variable, i.e., the spatiotemporal effect, on the volatility of an outcome variable. Furthermore, our suggested process allows for the fixed effects over time and space to account for the unobserved heterogeneity. For this dynamic spatiotemporal ARCH model, we derive a generalised method of moments (GMM) estimator based on the linear and quadratic moment conditions of a specific transformation. We show the consistency and asymptotic normality of the GMM estimator, and determine the best set of moment functions. We investigate the finite-sample properties of the proposed GMM estimator in a series of Monte-Carlo simulations with different model specifications and error distributions. Our simulation results show that our suggested GMM estimator has good finite sample properties. In an empirical application, we use monthly log-returns of the average condominium prices of each postcode of Berlin from 1995 to 2015 (190 spatial units, 240 time points) to demonstrate the use of our suggested model. Our estimation results show that the temporal, spatial and spatiotemporal lags of the log-squared returns have statistically significant effects on the volatility of the log-returns.</p>
+</section>
+<section id="model" class="level2">
+<h2 class="anchored" data-anchor-id="model">Model</h2>
+<p>The outcome variable <span class="math inline">\(y_{it}\)</span> of region <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span> is modeled according to <span class="math display">\[\begin{eqnarray}
+y_{it}      &amp; = &amp; h_{it}^{1/2} \varepsilon_{it},\\
+\log h_{it} &amp; = &amp; \sum_{l=1}^p\sum_{j=1}^n \rho_{l0} m_{l,ij} \log y^2_{jt} + \gamma_0 \log y^2_{i,t-1} + \sum_{l=1}^p\sum_{j=1}^n \delta_{l0} m_{l,ij} \log y^2_{j,t-1} \nonumber \\
+            &amp;   &amp; \quad + \mathbf{x}^{'}_{it} \boldsymbol{\beta}_0 + \mu_{i0} + \alpha_{t0},
+\end{eqnarray}\]</span> for <span class="math inline">\(i=1,2,\ldots,n\)</span> and <span class="math inline">\(t=1,\ldots T\)</span>. The spatial locations indexed by <span class="math inline">\(i = 1, \ldots, n\)</span> are supposed to be on discrete regular (e.g., for image processes) or irregular lattice, also known as spatial polygons. The latter case is typically present in economics, e.g., regional legal units, districts, countries, etc. Here, <span class="math inline">\(h_{it}\)</span> is considered as the volatility term in region <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>, and <span class="math inline">\(\varepsilon_{it}\)</span> are independent and identically distributed random variables that has mean zero and unit variance. The log-volatility terms follow the process in the equation given above, where <span class="math inline">\(\{m_{l,ij}\}_{l=1}^p\)</span>, for <span class="math inline">\(i,j=1,\ldots,n\)</span>, are the non-stochastic spatial weights. Here, <span class="math inline">\(p\)</span> is a finite positive integers, and <span class="math inline">\(\{m_{l,ii}\}_{l=1}^p\)</span> are zero for <span class="math inline">\(i=1,\ldots,n\)</span>. The spatial, temporal and spatiotemporal effects of the log-squared outcome variable on the log-volatility are measured by the unknown parameters <span class="math inline">\(\gamma_0\)</span>, <span class="math inline">\(\{\rho_{l0}\}_{l=1}^p\)</span>, and <span class="math inline">\(\{\delta_{l0}\}_{l=1}^q\)</span>, respectively. Further, <span class="math inline">\(\mathbf{x}_{it}\)</span> is a <span class="math inline">\(k\times1\)</span> vector of exogenous variables with the associated parameter vector <span class="math inline">\(\boldsymbol{\beta}_0\)</span>, and the regional and time fixed effects are denoted by <span class="math inline">\(\boldsymbol{\mu}_0=(\mu_{10},\ldots,\mu_{n0})^{'}\)</span> and <span class="math inline">\(\boldsymbol{\alpha}_0=(\alpha_{10},\ldots,\alpha_{T0})^{'}\)</span>. Both <span class="math inline">\(\boldsymbol{\mu}_0\)</span> and <span class="math inline">\(\boldsymbol{\alpha}_0\)</span> can be correlated with the exogenous variables in an arbitrary manner. We assume that the initial value vector <span class="math inline">\(\mathbf{Y}_0=(y_{10},\ldots,y_{n0})^{'}\)</span> is observable.</p>
+</section>
+<section id="functions-for-simulation-and-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="functions-for-simulation-and-estimation">Functions for simulation and estimation</h2>
+<p>Notice that the toy examples to show how the functions can be used is provided in the next section.</p>
+<div class="cell">
+<details>
+<summary>Show the function needed for simulation</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>simulate_dyn_spatiotemporal_ARCH <span class="ot">&lt;-</span> <span class="cf">function</span>(n, t, W, parameters){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  dimW <span class="ot">&lt;-</span> <span class="fu">dim</span>(W)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(dimW[<span class="dv">1</span>] <span class="sc">!=</span> n <span class="sc">|</span> dimW[<span class="dv">2</span>] <span class="sc">!=</span> n){</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Dimension of W is wrong"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(dimW) <span class="sc">==</span> <span class="dv">2</span>){</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    new.W <span class="ot">&lt;-</span> <span class="fu">array</span>(, <span class="at">dim =</span> <span class="fu">c</span>(n,n,p))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    new.W[,,<span class="dv">1</span>] <span class="ot">&lt;-</span> W</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    W <span class="ot">&lt;-</span> new.W</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> dimW[<span class="dv">3</span>]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># error distributions</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(parameters<span class="sc">$</span>errortype <span class="sc">==</span> <span class="st">"norm"</span>){</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    err_distr <span class="ot">&lt;-</span> <span class="cf">function</span>(n){</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">rnorm</span>(n))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (parameters<span class="sc">$</span>errortype <span class="sc">==</span> <span class="st">"t"</span>){</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    err_distr <span class="ot">&lt;-</span> <span class="cf">function</span>(n){</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">rt</span>(n, <span class="at">df =</span> <span class="dv">3</span>))</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># functions used for simulation (see Otto and Schmid 2019: arXiv:1908.08320)</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  f_inv <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">exp</span>(x))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  tau_eps <span class="ot">&lt;-</span> <span class="cf">function</span>(eps, W_1, alpha, theta, zeta, b){</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    eps_2 <span class="ot">&lt;-</span> <span class="fu">log</span>(eps<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    n     <span class="ot">&lt;-</span> <span class="fu">length</span>(eps)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>( <span class="fu">solve</span>(<span class="fu">diag</span>(n) <span class="sc">-</span> <span class="fu">Matrix</span>(W_1)) <span class="sc">%*%</span> alpha <span class="sc">+</span> (<span class="fu">diag</span>(n) <span class="sc">+</span> <span class="fu">solve</span>(<span class="fu">diag</span>(n) <span class="sc">-</span> <span class="fu">Matrix</span>(W_1)) <span class="sc">%*%</span> <span class="fu">Matrix</span>(W_1)) <span class="sc">%*%</span> eps_2  )</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  } </span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weight matrices</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  rhoW        <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(n, n))</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  deltaM      <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(n, n))</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    rhoW        <span class="ot">&lt;-</span> rhoW <span class="sc">+</span> parameters<span class="sc">$</span>rho[i] <span class="sc">*</span> W[,,i] </span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    deltaM      <span class="ot">&lt;-</span> deltaM <span class="sc">+</span> parameters<span class="sc">$</span>delta[i] <span class="sc">*</span> W[,,i] </span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># function to include exogeneous regressions</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">length</span>(parameters<span class="sc">$</span>beta)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  Xbeta <span class="ot">&lt;-</span> <span class="cf">function</span>(X, beta){</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(beta)){</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="dv">0</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(X <span class="sc">%*%</span> beta)</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># burn-in period</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the first simulations should be discarded to remove the influence of Y_0</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="co"># here, we choose a burn-in of 20 time points, which balances the required computation time and accuaracy</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  eps        <span class="ot">&lt;-</span> <span class="fu">err_distr</span>(n)</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  mu_i0      <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>  alpha_t0   <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rnorm</span>(<span class="dv">1</span>), n) <span class="sc">*</span> <span class="fu">ifelse</span>(parameters<span class="sc">$</span>ted, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>  lagged_var <span class="ot">&lt;-</span> mu_i0 <span class="sc">+</span> alpha_t0 <span class="sc">+</span> <span class="fu">Xbeta</span>(<span class="fu">array</span>(<span class="fu">rnorm</span>(k<span class="sc">*</span>n), <span class="at">dim =</span> <span class="fu">c</span>(n,k)), parameters<span class="sc">$</span>beta)</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  tau        <span class="ot">&lt;-</span> <span class="fu">tau_eps</span>(<span class="at">eps =</span> eps, <span class="at">W_1 =</span> rhoW, <span class="at">alpha =</span> lagged_var)</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  X          <span class="ot">&lt;-</span> lagged_var <span class="sc">+</span> rhoW <span class="sc">%*%</span> tau</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>  Y_00       <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">as.vector</span>(<span class="fu">f_inv</span>(X)))<span class="sc">^</span>(<span class="fl">0.5</span>) <span class="sc">%*%</span> eps</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>  X_regr     <span class="ot">&lt;-</span>  <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="dv">20</span><span class="sc">*</span>k<span class="sc">*</span>n), <span class="at">dim =</span> <span class="fu">c</span>(n,<span class="dv">20</span>,k))</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>  alpha      <span class="ot">&lt;-</span> parameters<span class="sc">$</span>alpha <span class="sc">*</span> <span class="fu">rep</span>(<span class="dv">1</span>, n) <span class="co"># add temporal lag and regressive term</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>){</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>    eps        <span class="ot">&lt;-</span> <span class="fu">err_distr</span>(n)</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    alpha_t0   <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rnorm</span>(<span class="dv">1</span>), n) <span class="sc">*</span> <span class="fu">ifelse</span>(parameters<span class="sc">$</span>ted, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    lagged_var <span class="ot">&lt;-</span> mu_i0 <span class="sc">+</span> alpha_t0 <span class="sc">+</span> parameters<span class="sc">$</span>gamma <span class="sc">*</span> <span class="fu">log</span>(Y_00<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> deltaM <span class="sc">%*%</span> <span class="fu">log</span>(Y_00<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">Xbeta</span>(X_regr[,b,], parameters<span class="sc">$</span>beta)</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    tau        <span class="ot">&lt;-</span> <span class="fu">tau_eps</span>(<span class="at">eps =</span> eps, <span class="at">W_1 =</span> rhoW, <span class="at">alpha =</span> lagged_var)</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    X          <span class="ot">&lt;-</span> lagged_var <span class="sc">+</span> rhoW <span class="sc">%*%</span> tau</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    Y          <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">as.vector</span>(<span class="fu">f_inv</span>(X)))<span class="sc">^</span>(<span class="fl">0.5</span>) <span class="sc">%*%</span> eps</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>    Y_00       <span class="ot">&lt;-</span> Y</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># simulations which are used later</span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>  Y      <span class="ot">&lt;-</span> <span class="fu">array</span>(, <span class="at">dim =</span> <span class="fu">c</span>(n, t))</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>  X_regr <span class="ot">&lt;-</span>  <span class="fu">array</span>(<span class="fu">rnorm</span>(k<span class="sc">*</span>n<span class="sc">*</span>t), <span class="at">dim =</span> <span class="fu">c</span>(n,t,k))</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>t){</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>    eps        <span class="ot">&lt;-</span> <span class="fu">err_distr</span>(n)</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>    alpha_t0   <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rnorm</span>(<span class="dv">1</span>), n) <span class="sc">*</span> <span class="fu">ifelse</span>(parameters<span class="sc">$</span>ted, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>    lagged_var <span class="ot">&lt;-</span> mu_i0 <span class="sc">+</span> alpha_t0 <span class="sc">+</span> parameters<span class="sc">$</span>gamma <span class="sc">*</span> <span class="fu">log</span>(Y_00<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> deltaM <span class="sc">%*%</span> <span class="fu">log</span>(Y_00<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">Xbeta</span>(X_regr[,b,], parameters<span class="sc">$</span>beta)</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>    tau        <span class="ot">&lt;-</span> <span class="fu">tau_eps</span>(<span class="at">eps =</span> eps, <span class="at">W_1 =</span> rhoW, <span class="at">alpha =</span> lagged_var)</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>    X          <span class="ot">&lt;-</span> lagged_var <span class="sc">+</span> rhoW <span class="sc">%*%</span> tau</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>    Y[,b]       <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">as.vector</span>(<span class="fu">f_inv</span>(X)))<span class="sc">^</span>(<span class="fl">0.5</span>) <span class="sc">%*%</span> eps</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>    Y_00       <span class="ot">&lt;-</span> Y[,b]</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">Y =</span> Y, <span class="at">X_regr =</span> X_regr, <span class="at">parameters =</span> parameters))</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Show the functions needed for estimation</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>GMM_SDPD_2SLS_ARCH <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, X, W, info, <span class="at">silent =</span> <span class="cn">TRUE</span>){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  ksy <span class="ot">=</span> info<span class="sc">$</span>ksy <span class="co"># spatial expansion order of y</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  ksx <span class="ot">=</span> info<span class="sc">$</span>ksx <span class="co"># spatial expansion order of x</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># checks</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(Y)){</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Y is missing"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(X)){</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span>silent){</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Model without exogenous regressors is fitted </span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(W)){</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"W is missing"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(info)){</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"info is missing"</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># expand matrix W when higher-order spatial lags are included</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  dimW <span class="ot">&lt;-</span> <span class="fu">dim</span>(W)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  n    <span class="ot">&lt;-</span> dimW[<span class="dv">1</span>]</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(dimW) <span class="sc">==</span> <span class="dv">2</span>){</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    new.W <span class="ot">&lt;-</span> <span class="fu">array</span>(, <span class="at">dim =</span> <span class="fu">c</span>(n,n,p))</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    new.W[,,<span class="dv">1</span>] <span class="ot">&lt;-</span> W</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    W <span class="ot">&lt;-</span> new.W</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> dimW[<span class="dv">3</span>]</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(dimW) <span class="sc">&gt;</span> <span class="dv">3</span> <span class="sc">|</span>  dimW[<span class="dv">1</span>] <span class="sc">!=</span>  dimW[<span class="dv">2</span>] <span class="sc">|</span> dimW[<span class="dv">2</span>] <span class="sc">!=</span>  n){</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Check W matrix (W must be of dimension n x n x p)"</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">dim</span>(Y)[<span class="dv">1</span>] <span class="sc">!=</span> n <span class="sc">|</span> <span class="fu">length</span>(<span class="fu">dim</span>(Y)) <span class="sc">!=</span> <span class="dv">2</span>){</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Y should be a matrix of dimension n x T"</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># log-squared transformation</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">any</span>(Y <span class="sc">==</span> <span class="dv">0</span>)){</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warning</span>(<span class="st">"No zero values of the response variable are allowed in the log-squared transformation. </span><span class="sc">\n</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="st">            All zero values have been replaced with the smallest non-zero entry."</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Y <span class="sc">==</span> <span class="dv">0</span>, <span class="fu">log</span>(<span class="fu">min</span>(Y[Y <span class="sc">!=</span> <span class="dv">0</span>]<span class="sc">^</span><span class="dv">2</span>)), <span class="fu">log</span>(Y<span class="sc">^</span><span class="dv">2</span>)) </span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">log</span>(Y<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  <span class="co"># spatial and temporal dimensions</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">dim</span>(Y)[<span class="dv">2</span>] <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span>silent){</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Number of cross-sectional units:"</span>, n,  <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Length of the time series:"</span>, t,  <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Number of spatial lags (weight matrices):"</span>, p,  <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>  s  <span class="ot">&lt;-</span> t <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>  nt <span class="ot">&lt;-</span> n <span class="sc">*</span> t</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>  ns <span class="ot">&lt;-</span> n <span class="sc">*</span> s</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>  yt   <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(Y[, <span class="dv">2</span><span class="sc">:</span>(t<span class="sc">+</span><span class="dv">1</span>)])</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>  ytl  <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(Y[, <span class="dv">1</span><span class="sc">:</span>(t)])</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>  ysl  <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(nt,p))</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>  ystl <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(nt,p))</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>t){</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>      ysl[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), j]  <span class="ot">&lt;-</span> W[,,j] <span class="sc">%*%</span> yt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>      ystl[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), j] <span class="ot">&lt;-</span> W[,,j] <span class="sc">%*%</span> ytl[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(info<span class="sc">$</span>stl <span class="sc">+</span> info<span class="sc">$</span>tl <span class="sc">==</span> <span class="dv">2</span>){</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>    xw <span class="ot">&lt;-</span> <span class="fu">cbind</span>(ytl, ystl);</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (info<span class="sc">$</span>stl <span class="sc">+</span> info<span class="sc">$</span>tl <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(info<span class="sc">$</span>stl <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>      xw <span class="ot">&lt;-</span> ystl</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>      xw <span class="ot">&lt;-</span> ytl</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (info<span class="sc">$</span>stl <span class="sc">+</span> info<span class="sc">$</span>tl <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"No spatial and no temporal lag given"</span>)</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Double-Check stl &amp; tl # in Info structure"</span>)</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>  X_stacked <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>  W1hx <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>  MHX <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(X)){</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>t){</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>      X_stacked <span class="ot">&lt;-</span> <span class="fu">rbind</span>(X_stacked, X[,i<span class="sc">+</span><span class="dv">1</span>,])</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">dim</span>(X)[<span class="dv">3</span>] <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>      X_stacked <span class="ot">&lt;-</span> <span class="fu">array</span>(X_stacked, <span class="at">dim =</span> <span class="fu">c</span>(<span class="fu">length</span>(X_stacked), <span class="dv">1</span>))</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>  xs  <span class="ot">&lt;-</span> X_stacked;</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>  xt  <span class="ot">&lt;-</span> <span class="fu">cbind</span>(xw, xs)</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>  zt  <span class="ot">&lt;-</span> <span class="fu">cbind</span>(ysl, xt)</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>  kz  <span class="ot">&lt;-</span> <span class="fu">dim</span>(zt)[<span class="dv">2</span>]</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>  kx  <span class="ot">&lt;-</span> <span class="fu">dim</span>(xt)[<span class="dv">2</span>]</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>  kxs <span class="ot">&lt;-</span> <span class="fu">dim</span>(xs)[<span class="dv">2</span>]</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>  kxw <span class="ot">&lt;-</span> <span class="fu">dim</span>(xw)[<span class="dv">2</span>]</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>  <span class="co"># transformation F</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>  c <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((t<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>s))<span class="sc">/</span>(t<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>s)<span class="sc">+</span><span class="dv">1</span>))</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>  F <span class="ot">&lt;-</span> <span class="fu">diag</span>(t)</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>  F <span class="ot">&lt;-</span> F[, <span class="dv">1</span><span class="sc">:</span>(t<span class="dv">-1</span>)]</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(t<span class="dv">-1</span>)){</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>    F[(i<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>t, i] <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span>(t<span class="sc">-</span>i);</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>    F[, i]        <span class="ot">&lt;-</span> c[i] <span class="sc">*</span> F[,i]</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>  hyt  <span class="ot">&lt;-</span> <span class="fu">array</span>(yt, <span class="at">dim =</span> <span class="fu">c</span>(n,t))</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>  hyt  <span class="ot">&lt;-</span> hyt <span class="sc">%*%</span> F</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>  hyt  <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(hyt);</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>  hytl <span class="ot">&lt;-</span> <span class="fu">array</span>(ytl, <span class="at">dim =</span> <span class="fu">c</span>(n,t))</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>  hytl <span class="ot">&lt;-</span> hytl <span class="sc">%*%</span> F</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>  hytl <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(hytl)</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>  hysl <span class="ot">&lt;-</span> <span class="fu">array</span>(ysl, <span class="at">dim =</span> <span class="fu">c</span>(n,t,p))</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>  hysltemp <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(n,t<span class="dv">-1</span>,p))</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>    hysltemp[,,i] <span class="ot">&lt;-</span> hysl[,,i] <span class="sc">%*%</span> F</span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>  hysl <span class="ot">&lt;-</span> <span class="fu">array</span>(hysltemp, <span class="at">dim =</span> <span class="fu">c</span>(ns,p))</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>  hystl <span class="ot">&lt;-</span> <span class="fu">array</span>(ystl, <span class="at">dim =</span> <span class="fu">c</span>(n,t,p))</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>  hystltemp <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(n,t<span class="dv">-1</span>,p))</span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>    hystltemp[,,i] <span class="ot">&lt;-</span> hystl[,,i] <span class="sc">%*%</span> F</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>  hystl <span class="ot">&lt;-</span> <span class="fu">array</span>(hystltemp, <span class="at">dim =</span> <span class="fu">c</span>(ns,p))</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(X_stacked)){</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>    kx <span class="ot">&lt;-</span> <span class="fu">dim</span>(X_stacked)[<span class="dv">2</span>]</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>    hx <span class="ot">&lt;-</span> <span class="fu">array</span>(X_stacked, <span class="at">dim =</span> <span class="fu">c</span>(n,t,kx))</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>    hxtemp <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(n,t<span class="dv">-1</span>,kx))</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>kx){</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>      hxtemp[,,i] <span class="ot">&lt;-</span> hx[,,i] <span class="sc">%*%</span> F</span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>    hx <span class="ot">&lt;-</span> <span class="fu">array</span>(hxtemp, <span class="at">dim =</span> <span class="fu">c</span>(ns,kx))</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>    hx <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(info<span class="sc">$</span>stl <span class="sc">+</span> info<span class="sc">$</span>tl <span class="sc">==</span> <span class="dv">2</span>){</span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>    hxw <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hytl, hystl);</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span>(info<span class="sc">$</span>stl <span class="sc">+</span> info<span class="sc">$</span>tl <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(info<span class="sc">$</span>stl <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>      hxw <span class="ot">&lt;-</span> hystl</span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>      hxw <span class="ot">&lt;-</span> hytl</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>    } </span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span>(info<span class="sc">$</span>stl <span class="sc">+</span> info<span class="sc">$</span>tl <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"no spatial and temporal lag given, check suitability"</span>)</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Doube-check info$stl and info$tl"</span>)</span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>  pyid     <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(ksy,<span class="dv">2</span>))</span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>  pa       <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>  pb       <span class="ot">&lt;-</span> p</span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>  pyid[<span class="dv">1</span>,] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>ksy){</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>    pa <span class="ot">&lt;-</span> pa <span class="sc">+</span> p<span class="sc">^</span>(k<span class="dv">-1</span>)</span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>    pb <span class="ot">&lt;-</span> pb <span class="sc">+</span> p<span class="sc">^</span>k</span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>    pyid[k,] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>  WY <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(nt, pyid[ksy,<span class="dv">2</span>]));</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>  WY[, <span class="dv">1</span><span class="sc">:</span>p] <span class="ot">=</span> ystl</span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>t){</span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ksy<span class="dv">-1</span>)){</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>        WY[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), (pyid[k,<span class="dv">2</span>] <span class="sc">+</span> <span class="dv">1</span> <span class="sc">+</span> (j<span class="dv">-1</span>)<span class="sc">*</span>p<span class="sc">^</span>k)<span class="sc">:</span>(pyid[k,<span class="dv">2</span>]<span class="sc">+</span>j<span class="sc">*</span>p<span class="sc">^</span>k)] <span class="ot">&lt;-</span> W[,,j] <span class="sc">%*%</span> WY[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), pyid[k,<span class="dv">1</span>]<span class="sc">:</span>pyid[k,<span class="dv">2</span>]]</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(X_stacked)){</span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>    kx <span class="ot">&lt;-</span> <span class="fu">dim</span>(X_stacked)[<span class="dv">2</span>]</span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>    W1hx <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(ns,kx<span class="sc">*</span>p))</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>s){</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>        W1hx[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), (<span class="dv">1</span><span class="sc">+</span>(j<span class="dv">-1</span>)<span class="sc">*</span>kx)<span class="sc">:</span>(j<span class="sc">*</span>kx)] <span class="ot">&lt;-</span> W[,,j] <span class="sc">%*%</span> hx[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a>    pxid <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(ksx,<span class="dv">2</span>))</span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>    pa       <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>    pb       <span class="ot">&lt;-</span> p<span class="sc">*</span>kx</span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>    pxid[<span class="dv">1</span>,] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>ksx){</span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>      pa <span class="ot">&lt;-</span> pa <span class="sc">+</span> p<span class="sc">^</span>(k<span class="dv">-1</span>)<span class="sc">*</span>kx</span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>      pb <span class="ot">&lt;-</span> pb <span class="sc">+</span> p<span class="sc">^</span>k<span class="sc">*</span>kx</span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>      pxid[k,] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>    WHX <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(ns, pxid[ksx,<span class="dv">2</span>]<span class="sc">*</span>kx))</span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a>    WHX[,<span class="dv">1</span><span class="sc">:</span>(p<span class="sc">*</span>kx)] <span class="ot">&lt;-</span> W1hx;</span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>s){</span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ksx<span class="dv">-1</span>)){</span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a>          WHX[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), (pxid[k,<span class="dv">2</span>]<span class="sc">+</span><span class="dv">1</span><span class="sc">+</span>(j<span class="dv">-1</span>)<span class="sc">*</span>p<span class="sc">^</span>k<span class="sc">*</span>kx)<span class="sc">:</span>(pxid[k,<span class="dv">2</span>]<span class="sc">+</span>j<span class="sc">*</span>p<span class="sc">^</span>k<span class="sc">*</span>kx)] <span class="ot">&lt;-</span> W[,,j] <span class="sc">%*%</span> WHX[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), pxid[k,<span class="dv">1</span>]<span class="sc">:</span>pxid[k,<span class="dv">2</span>]]</span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Following is the IV without interaction term</span></span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a>  pyid <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(ksy,<span class="dv">2</span>))</span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a>  pa   <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a>  pb   <span class="ot">&lt;-</span> p</span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a>  pyid[<span class="dv">1</span>,] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>ksy){</span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a>    pa <span class="ot">&lt;-</span> pa <span class="sc">+</span> p</span>
+<span id="cb2-235"><a href="#cb2-235" aria-hidden="true" tabindex="-1"></a>    pb <span class="ot">&lt;-</span> pb <span class="sc">+</span> p</span>
+<span id="cb2-236"><a href="#cb2-236" aria-hidden="true" tabindex="-1"></a>    pyid[k,] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-237"><a href="#cb2-237" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-238"><a href="#cb2-238" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-239"><a href="#cb2-239" aria-hidden="true" tabindex="-1"></a>  MY <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(nt, pyid[ksy,<span class="dv">2</span>]))</span>
+<span id="cb2-240"><a href="#cb2-240" aria-hidden="true" tabindex="-1"></a>  MY[,<span class="dv">1</span><span class="sc">:</span>p] <span class="ot">&lt;-</span> ystl;</span>
+<span id="cb2-241"><a href="#cb2-241" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-242"><a href="#cb2-242" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>t){</span>
+<span id="cb2-243"><a href="#cb2-243" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ksy<span class="dv">-1</span>)){</span>
+<span id="cb2-244"><a href="#cb2-244" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-245"><a href="#cb2-245" aria-hidden="true" tabindex="-1"></a>        MY[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), (pyid[k,<span class="dv">2</span>]<span class="sc">+</span>j)<span class="sc">:</span>(pyid[k,<span class="dv">2</span>]<span class="sc">+</span>j)] <span class="ot">&lt;-</span> W[,,j] <span class="sc">%*%</span> MY[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n), (pyid[k,<span class="dv">1</span>]<span class="sc">-</span><span class="dv">1</span><span class="sc">+</span>j)<span class="sc">:</span>(pyid[k,<span class="dv">1</span>]<span class="sc">-</span><span class="dv">1</span><span class="sc">+</span>j)]</span>
+<span id="cb2-246"><a href="#cb2-246" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-247"><a href="#cb2-247" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-248"><a href="#cb2-248" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-249"><a href="#cb2-249" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-250"><a href="#cb2-250" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(X_stacked)){</span>
+<span id="cb2-251"><a href="#cb2-251" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-252"><a href="#cb2-252" aria-hidden="true" tabindex="-1"></a>    kx <span class="ot">&lt;-</span> <span class="fu">dim</span>(X_stacked)[<span class="dv">2</span>]</span>
+<span id="cb2-253"><a href="#cb2-253" aria-hidden="true" tabindex="-1"></a>    pxid <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(ksx,<span class="dv">2</span>))</span>
+<span id="cb2-254"><a href="#cb2-254" aria-hidden="true" tabindex="-1"></a>    pa <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-255"><a href="#cb2-255" aria-hidden="true" tabindex="-1"></a>    pb <span class="ot">&lt;-</span> p<span class="sc">*</span>kx</span>
+<span id="cb2-256"><a href="#cb2-256" aria-hidden="true" tabindex="-1"></a>    pxid[<span class="dv">1</span>,] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-257"><a href="#cb2-257" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>ksx){</span>
+<span id="cb2-258"><a href="#cb2-258" aria-hidden="true" tabindex="-1"></a>      pa <span class="ot">&lt;-</span> pa <span class="sc">+</span> p<span class="sc">*</span>kx</span>
+<span id="cb2-259"><a href="#cb2-259" aria-hidden="true" tabindex="-1"></a>      pb <span class="ot">&lt;-</span> pb <span class="sc">+</span> p<span class="sc">*</span>kx</span>
+<span id="cb2-260"><a href="#cb2-260" aria-hidden="true" tabindex="-1"></a>      pxid[k, ] <span class="ot">&lt;-</span> <span class="fu">c</span>(pa, pb)</span>
+<span id="cb2-261"><a href="#cb2-261" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-262"><a href="#cb2-262" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-263"><a href="#cb2-263" aria-hidden="true" tabindex="-1"></a>    MHX <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(ns,pyid[ksx,<span class="dv">2</span>]<span class="sc">*</span>kx))</span>
+<span id="cb2-264"><a href="#cb2-264" aria-hidden="true" tabindex="-1"></a>    MHX[,<span class="dv">1</span><span class="sc">:</span>(p<span class="sc">*</span>kx)] <span class="ot">&lt;-</span> W1hx</span>
+<span id="cb2-265"><a href="#cb2-265" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>s){</span>
+<span id="cb2-266"><a href="#cb2-266" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ksx<span class="dv">-1</span>)){</span>
+<span id="cb2-267"><a href="#cb2-267" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-268"><a href="#cb2-268" aria-hidden="true" tabindex="-1"></a>          MHX[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),(pxid[k,<span class="dv">2</span>]<span class="sc">+</span><span class="dv">1</span><span class="sc">+</span>(j<span class="dv">-1</span>)<span class="sc">*</span>kx)<span class="sc">:</span>(pxid[k,<span class="dv">2</span>]<span class="sc">+</span>j<span class="sc">*</span>kx)] <span class="ot">&lt;-</span> W[,,j] <span class="sc">%*%</span> MHX[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),(pxid[k,<span class="dv">1</span>]<span class="sc">+</span>(j<span class="dv">-1</span>)<span class="sc">*</span>kx)<span class="sc">:</span>(pxid[k,<span class="dv">1</span>]<span class="sc">-</span><span class="dv">1</span><span class="sc">+</span>j<span class="sc">*</span>kx)]</span>
+<span id="cb2-269"><a href="#cb2-269" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-270"><a href="#cb2-270" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-271"><a href="#cb2-271" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-272"><a href="#cb2-272" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-273"><a href="#cb2-273" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-274"><a href="#cb2-274" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-275"><a href="#cb2-275" aria-hidden="true" tabindex="-1"></a>  Qw     <span class="ot">&lt;-</span> <span class="fu">cbind</span>(ytl, WY)</span>
+<span id="cb2-276"><a href="#cb2-276" aria-hidden="true" tabindex="-1"></a>  Qw_alt <span class="ot">&lt;-</span> <span class="fu">cbind</span>(ytl, MY)</span>
+<span id="cb2-277"><a href="#cb2-277" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-278"><a href="#cb2-278" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(ksx <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb2-279"><a href="#cb2-279" aria-hidden="true" tabindex="-1"></a>    Qs     <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-280"><a href="#cb2-280" aria-hidden="true" tabindex="-1"></a>    Qs_alt <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb2-281"><a href="#cb2-281" aria-hidden="true" tabindex="-1"></a>    qs     <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-282"><a href="#cb2-282" aria-hidden="true" tabindex="-1"></a>    qs_alt <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-283"><a href="#cb2-283" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-284"><a href="#cb2-284" aria-hidden="true" tabindex="-1"></a>    Qs     <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hx, W1hx)</span>
+<span id="cb2-285"><a href="#cb2-285" aria-hidden="true" tabindex="-1"></a>    Qs_alt <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hx, MHX)</span>
+<span id="cb2-286"><a href="#cb2-286" aria-hidden="true" tabindex="-1"></a>    qs     <span class="ot">&lt;-</span> <span class="fu">dim</span>(Qs)[<span class="dv">2</span>]</span>
+<span id="cb2-287"><a href="#cb2-287" aria-hidden="true" tabindex="-1"></a>    qs_slt <span class="ot">&lt;-</span> <span class="fu">dim</span>(Qs_alt)[<span class="dv">2</span>]</span>
+<span id="cb2-288"><a href="#cb2-288" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-289"><a href="#cb2-289" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-290"><a href="#cb2-290" aria-hidden="true" tabindex="-1"></a>  Qw     <span class="ot">&lt;-</span> Qw[<span class="dv">1</span><span class="sc">:</span>ns,]</span>
+<span id="cb2-291"><a href="#cb2-291" aria-hidden="true" tabindex="-1"></a>  Qw_alt <span class="ot">&lt;-</span> Qw_alt[<span class="dv">1</span><span class="sc">:</span>ns,]</span>
+<span id="cb2-292"><a href="#cb2-292" aria-hidden="true" tabindex="-1"></a>  qw     <span class="ot">&lt;-</span> <span class="fu">dim</span>(Qw)[<span class="dv">2</span>]</span>
+<span id="cb2-293"><a href="#cb2-293" aria-hidden="true" tabindex="-1"></a>  qw_alt <span class="ot">&lt;-</span> <span class="fu">dim</span>(Qw_alt)[<span class="dv">2</span>]</span>
+<span id="cb2-294"><a href="#cb2-294" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-295"><a href="#cb2-295" aria-hidden="true" tabindex="-1"></a>  Q      <span class="ot">&lt;-</span> <span class="fu">cbind</span>(Qw, Qs)</span>
+<span id="cb2-296"><a href="#cb2-296" aria-hidden="true" tabindex="-1"></a>  Q_alt  <span class="ot">&lt;-</span> <span class="fu">cbind</span>(Qw_alt, Qs_alt)</span>
+<span id="cb2-297"><a href="#cb2-297" aria-hidden="true" tabindex="-1"></a>  kq     <span class="ot">&lt;-</span> <span class="fu">dim</span>(Q)[<span class="dv">2</span>]</span>
+<span id="cb2-298"><a href="#cb2-298" aria-hidden="true" tabindex="-1"></a>  kq_alt <span class="ot">&lt;-</span> <span class="fu">dim</span>(Q_alt)[<span class="dv">2</span>]</span>
+<span id="cb2-299"><a href="#cb2-299" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-300"><a href="#cb2-300" aria-hidden="true" tabindex="-1"></a>  hxs <span class="ot">&lt;-</span> hx</span>
+<span id="cb2-301"><a href="#cb2-301" aria-hidden="true" tabindex="-1"></a>  hxt <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hxw, hxs)</span>
+<span id="cb2-302"><a href="#cb2-302" aria-hidden="true" tabindex="-1"></a>  hzt <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hysl, hxt)</span>
+<span id="cb2-303"><a href="#cb2-303" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-304"><a href="#cb2-304" aria-hidden="true" tabindex="-1"></a>  Qhz <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(kq, kz))</span>
+<span id="cb2-305"><a href="#cb2-305" aria-hidden="true" tabindex="-1"></a>  QQ  <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(kq, kq))</span>
+<span id="cb2-306"><a href="#cb2-306" aria-hidden="true" tabindex="-1"></a>  Qhy <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(kq, <span class="dv">1</span>))</span>
+<span id="cb2-307"><a href="#cb2-307" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-308"><a href="#cb2-308" aria-hidden="true" tabindex="-1"></a>  Qhz_alt <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(kq_alt, kz))</span>
+<span id="cb2-309"><a href="#cb2-309" aria-hidden="true" tabindex="-1"></a>  QQ_alt  <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(kq_alt, kq_alt))</span>
+<span id="cb2-310"><a href="#cb2-310" aria-hidden="true" tabindex="-1"></a>  Qhy_alt <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(kq_alt, <span class="dv">1</span>))</span>
+<span id="cb2-311"><a href="#cb2-311" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-312"><a href="#cb2-312" aria-hidden="true" tabindex="-1"></a>  Jn <span class="ot">&lt;-</span> <span class="fu">diag</span>(n) <span class="sc">-</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">/</span>n, <span class="at">dim =</span> <span class="fu">c</span>(n,n))</span>
+<span id="cb2-313"><a href="#cb2-313" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-314"><a href="#cb2-314" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>s){</span>
+<span id="cb2-315"><a href="#cb2-315" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(info<span class="sc">$</span>ted <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb2-316"><a href="#cb2-316" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb2-317"><a href="#cb2-317" aria-hidden="true" tabindex="-1"></a>      Qhz <span class="ot">&lt;-</span> Qhz <span class="sc">+</span> <span class="fu">t</span>(Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Jn <span class="sc">%*%</span> hzt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-318"><a href="#cb2-318" aria-hidden="true" tabindex="-1"></a>      QQ  <span class="ot">&lt;-</span> QQ  <span class="sc">+</span> <span class="fu">t</span>(Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Jn <span class="sc">%*%</span> Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-319"><a href="#cb2-319" aria-hidden="true" tabindex="-1"></a>      Qhy <span class="ot">&lt;-</span> Qhy <span class="sc">+</span> <span class="fu">t</span>(Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Jn <span class="sc">%*%</span> hyt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-320"><a href="#cb2-320" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb2-321"><a href="#cb2-321" aria-hidden="true" tabindex="-1"></a>      Qhz_alt <span class="ot">&lt;-</span> Qhz_alt <span class="sc">+</span> <span class="fu">t</span>(Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Jn <span class="sc">%*%</span> hzt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-322"><a href="#cb2-322" aria-hidden="true" tabindex="-1"></a>      QQ_alt  <span class="ot">&lt;-</span> QQ_alt  <span class="sc">+</span> <span class="fu">t</span>(Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Jn <span class="sc">%*%</span> Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-323"><a href="#cb2-323" aria-hidden="true" tabindex="-1"></a>      Qhy_alt <span class="ot">&lt;-</span> Qhy_alt <span class="sc">+</span> <span class="fu">t</span>(Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Jn <span class="sc">%*%</span> hyt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-324"><a href="#cb2-324" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb2-325"><a href="#cb2-325" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb2-326"><a href="#cb2-326" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb2-327"><a href="#cb2-327" aria-hidden="true" tabindex="-1"></a>      Qhz <span class="ot">&lt;-</span> Qhz <span class="sc">+</span> <span class="fu">t</span>(Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> hzt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-328"><a href="#cb2-328" aria-hidden="true" tabindex="-1"></a>      QQ  <span class="ot">&lt;-</span> QQ  <span class="sc">+</span> <span class="fu">t</span>(Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-329"><a href="#cb2-329" aria-hidden="true" tabindex="-1"></a>      Qhy <span class="ot">&lt;-</span> Qhy <span class="sc">+</span> <span class="fu">t</span>(Q[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> hyt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-330"><a href="#cb2-330" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb2-331"><a href="#cb2-331" aria-hidden="true" tabindex="-1"></a>      Qhz_alt <span class="ot">&lt;-</span> Qhz_alt <span class="sc">+</span> <span class="fu">t</span>(Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> hzt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-332"><a href="#cb2-332" aria-hidden="true" tabindex="-1"></a>      QQ_alt  <span class="ot">&lt;-</span> QQ_alt  <span class="sc">+</span> <span class="fu">t</span>(Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]</span>
+<span id="cb2-333"><a href="#cb2-333" aria-hidden="true" tabindex="-1"></a>      Qhy_alt <span class="ot">&lt;-</span> Qhy_alt <span class="sc">+</span> <span class="fu">t</span>(Q_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n),]) <span class="sc">%*%</span> hyt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-334"><a href="#cb2-334" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb2-335"><a href="#cb2-335" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-336"><a href="#cb2-336" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-337"><a href="#cb2-337" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-338"><a href="#cb2-338" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">mldivide</span>(<span class="fu">t</span>(Qhz) <span class="sc">%*%</span> <span class="fu">ginv</span>(QQ) <span class="sc">%*%</span> Qhz, <span class="fu">t</span>(Qhz) <span class="sc">%*%</span> <span class="fu">ginv</span>(QQ) <span class="sc">%*%</span> Qhy)</span>
+<span id="cb2-339"><a href="#cb2-339" aria-hidden="true" tabindex="-1"></a>  theta_alt <span class="ot">&lt;-</span> <span class="fu">mldivide</span>(<span class="fu">t</span>(Qhz_alt) <span class="sc">%*%</span> <span class="fu">ginv</span>(QQ_alt) <span class="sc">%*%</span> Qhz_alt, <span class="fu">t</span>(Qhz_alt) <span class="sc">%*%</span> <span class="fu">ginv</span>(QQ_alt) <span class="sc">%*%</span> Qhy_alt)</span>
+<span id="cb2-340"><a href="#cb2-340" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-341"><a href="#cb2-341" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> hyt <span class="sc">-</span> hzt <span class="sc">%*%</span> theta</span>
+<span id="cb2-342"><a href="#cb2-342" aria-hidden="true" tabindex="-1"></a>  e_alt <span class="ot">&lt;-</span> hyt <span class="sc">-</span> hzt <span class="sc">%*%</span> theta_alt</span>
+<span id="cb2-343"><a href="#cb2-343" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(info<span class="sc">$</span>ted <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb2-344"><a href="#cb2-344" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>s){</span>
+<span id="cb2-345"><a href="#cb2-345" aria-hidden="true" tabindex="-1"></a>      e[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)] <span class="ot">&lt;-</span> Jn <span class="sc">%*%</span> e[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-346"><a href="#cb2-346" aria-hidden="true" tabindex="-1"></a>      e_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)] <span class="ot">&lt;-</span> Jn <span class="sc">%*%</span> e_alt[(<span class="dv">1</span><span class="sc">+</span>(i<span class="dv">-1</span>)<span class="sc">*</span>n)<span class="sc">:</span>(i<span class="sc">*</span>n)]</span>
+<span id="cb2-347"><a href="#cb2-347" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-348"><a href="#cb2-348" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-349"><a href="#cb2-349" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-350"><a href="#cb2-350" aria-hidden="true" tabindex="-1"></a>  sigma2 <span class="ot">&lt;-</span> <span class="fu">mean</span>((e<span class="sc">-</span><span class="fu">mean</span>(e))<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-351"><a href="#cb2-351" aria-hidden="true" tabindex="-1"></a>  sigma4 <span class="ot">&lt;-</span> <span class="fu">mean</span>((e<span class="sc">-</span><span class="fu">mean</span>(e))<span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb2-352"><a href="#cb2-352" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-353"><a href="#cb2-353" aria-hidden="true" tabindex="-1"></a>  sigma2_alt <span class="ot">&lt;-</span> <span class="fu">mean</span>((e_alt<span class="sc">-</span><span class="fu">mean</span>(e_alt))<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-354"><a href="#cb2-354" aria-hidden="true" tabindex="-1"></a>  sigma4_alt <span class="ot">&lt;-</span> <span class="fu">mean</span>((e_alt<span class="sc">-</span><span class="fu">mean</span>(e_alt))<span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb2-355"><a href="#cb2-355" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-356"><a href="#cb2-356" aria-hidden="true" tabindex="-1"></a>  lambda <span class="ot">&lt;-</span> theta[<span class="dv">1</span><span class="sc">:</span>p]</span>
+<span id="cb2-357"><a href="#cb2-357" aria-hidden="true" tabindex="-1"></a>  delta  <span class="ot">&lt;-</span> theta[(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>kz]</span>
+<span id="cb2-358"><a href="#cb2-358" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-359"><a href="#cb2-359" aria-hidden="true" tabindex="-1"></a>  lambda_alt <span class="ot">&lt;-</span> theta_alt[<span class="dv">1</span><span class="sc">:</span>p]</span>
+<span id="cb2-360"><a href="#cb2-360" aria-hidden="true" tabindex="-1"></a>  delta_alt  <span class="ot">&lt;-</span> theta_alt[p<span class="sc">+</span><span class="dv">1</span><span class="sc">:</span>kz]</span>
+<span id="cb2-361"><a href="#cb2-361" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-362"><a href="#cb2-362" aria-hidden="true" tabindex="-1"></a>  lambdaW     <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(n,n))</span>
+<span id="cb2-363"><a href="#cb2-363" aria-hidden="true" tabindex="-1"></a>  lambdaW_alt <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(n,n))</span>
+<span id="cb2-364"><a href="#cb2-364" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
+<span id="cb2-365"><a href="#cb2-365" aria-hidden="true" tabindex="-1"></a>    lambdaW     <span class="ot">&lt;-</span> lambdaW     <span class="sc">+</span> lambda[j] <span class="sc">*</span> W[,,j]</span>
+<span id="cb2-366"><a href="#cb2-366" aria-hidden="true" tabindex="-1"></a>    lambdaW_alt <span class="ot">&lt;-</span> lambdaW_alt <span class="sc">+</span> lambda_alt[j] <span class="sc">*</span> W[,,j]</span>
+<span id="cb2-367"><a href="#cb2-367" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-368"><a href="#cb2-368" aria-hidden="true" tabindex="-1"></a>  Sn <span class="ot">&lt;-</span> <span class="fu">diag</span>(n) <span class="sc">-</span> lambdaW</span>
+<span id="cb2-369"><a href="#cb2-369" aria-hidden="true" tabindex="-1"></a>  Sn_alt <span class="ot">&lt;-</span> <span class="fu">diag</span>(n) <span class="sc">-</span> lambdaW_alt</span>
+<span id="cb2-370"><a href="#cb2-370" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-371"><a href="#cb2-371" aria-hidden="true" tabindex="-1"></a>  DSiD <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(sigma2<span class="sc">*</span>ns) <span class="sc">*</span> <span class="fu">t</span>(Qhz) <span class="sc">%*%</span> <span class="fu">ginv</span>(QQ) <span class="sc">%*%</span> Qhz</span>
+<span id="cb2-372"><a href="#cb2-372" aria-hidden="true" tabindex="-1"></a>  DSiD_alt <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(sigma2_alt<span class="sc">*</span>ns) <span class="sc">*</span> <span class="fu">t</span>(Qhz_alt) <span class="sc">%*%</span> <span class="fu">ginv</span>(QQ_alt) <span class="sc">%*%</span> Qhz_alt</span>
+<span id="cb2-373"><a href="#cb2-373" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-374"><a href="#cb2-374" aria-hidden="true" tabindex="-1"></a>  SIG <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(<span class="dv">1</span><span class="sc">/</span>ns <span class="sc">*</span> <span class="fu">solve</span>(DSiD), <span class="at">error =</span> <span class="cf">function</span>(e){<span class="fu">cat</span>(<span class="st">"DSiD not invertible </span><span class="sc">\n</span><span class="st">"</span>); <span class="fu">return</span>(<span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">dim</span>(DSiD)))})</span>
+<span id="cb2-375"><a href="#cb2-375" aria-hidden="true" tabindex="-1"></a>  <span class="co"># SIG &lt;- 1/ns * solve(DSiD);</span></span>
+<span id="cb2-376"><a href="#cb2-376" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-377"><a href="#cb2-377" aria-hidden="true" tabindex="-1"></a>  std <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">abs</span>(<span class="fu">diag</span>(SIG)))</span>
+<span id="cb2-378"><a href="#cb2-378" aria-hidden="true" tabindex="-1"></a>  tstat <span class="ot">&lt;-</span> theta<span class="sc">/</span>std</span>
+<span id="cb2-379"><a href="#cb2-379" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-380"><a href="#cb2-380" aria-hidden="true" tabindex="-1"></a>  SIG_alt <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(<span class="dv">1</span><span class="sc">/</span>ns <span class="sc">*</span> <span class="fu">solve</span>(DSiD_alt), <span class="at">error =</span> <span class="cf">function</span>(e){<span class="fu">cat</span>(<span class="st">"DSiD_alt not invertible </span><span class="sc">\n</span><span class="st">"</span>); <span class="fu">return</span>(<span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">dim</span>(DSiD_alt)))})</span>
+<span id="cb2-381"><a href="#cb2-381" aria-hidden="true" tabindex="-1"></a>  <span class="co"># SIG_alt &lt;- 1/ns * solve(DSiD_alt)</span></span>
+<span id="cb2-382"><a href="#cb2-382" aria-hidden="true" tabindex="-1"></a>  std_alt <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">abs</span>(<span class="fu">diag</span>(SIG_alt)))</span>
+<span id="cb2-383"><a href="#cb2-383" aria-hidden="true" tabindex="-1"></a>  tstat_alt <span class="ot">&lt;-</span> theta_alt<span class="sc">/</span>std_alt</span>
+<span id="cb2-384"><a href="#cb2-384" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-385"><a href="#cb2-385" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">theta =</span> theta, <span class="at">std =</span> std, <span class="at">SIG =</span> SIG, <span class="at">tstat =</span> tstat, <span class="at">sigma2 =</span> sigma2,</span>
+<span id="cb2-386"><a href="#cb2-386" aria-hidden="true" tabindex="-1"></a>                  <span class="at">theta_alt =</span> theta_alt, <span class="at">std_alt =</span> std_alt, <span class="at">SIG_alt =</span> SIG_alt, <span class="at">tstat_alt =</span> tstat_alt, <span class="at">sigma2_alt =</span> sigma2_alt,</span>
+<span id="cb2-387"><a href="#cb2-387" aria-hidden="true" tabindex="-1"></a>                  <span class="at">e =</span> <span class="fu">array</span>(e, <span class="at">dim =</span> <span class="fu">c</span>(n, t)), <span class="at">e_alt =</span> <span class="fu">array</span>(e_alt, <span class="at">dim =</span> <span class="fu">c</span>(n, t)), <span class="at">hyt =</span> <span class="fu">array</span>(hyt, <span class="at">dim =</span> <span class="fu">c</span>(n, t)))</span>
+<span id="cb2-388"><a href="#cb2-388" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-389"><a href="#cb2-389" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(results)</span>
+<span id="cb2-390"><a href="#cb2-390" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-391"><a href="#cb2-391" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-392"><a href="#cb2-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-393"><a href="#cb2-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-394"><a href="#cb2-394" aria-hidden="true" tabindex="-1"></a>mldivide <span class="ot">&lt;-</span> <span class="cf">function</span>(A, b){</span>
+<span id="cb2-395"><a href="#cb2-395" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">ginv</span>(<span class="fu">t</span>(A) <span class="sc">%*%</span> A) <span class="sc">%*%</span> <span class="fu">t</span>(A) <span class="sc">%*%</span> b)</span>
+<span id="cb2-396"><a href="#cb2-396" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return(qr.solve(A, b))</span></span>
+<span id="cb2-397"><a href="#cb2-397" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="toy-example" class="level2">
+<h2 class="anchored" data-anchor-id="toy-example">Toy example</h2>
+<p>For example 1, we simulate a dynamic spatiotemporal ARCH process with <span class="math inline">\(n = 100\)</span> locations on a two-dimensional <span class="math inline">\(10 \times 10\)</span> spatial lattice at <span class="math inline">\(t = 50\)</span> time points. The parameters are chosen as follows: <span class="math inline">\(\rho = 0.4\)</span>, <span class="math inline">\(\gamma = 0.2\)</span>, <span class="math inline">\(\delta = 0\)</span> (i.e., no spatiotemporal lag). The weight matrix is chosen as Queen’s contiguity matrix. Furthermore, we include temporal fixed effects in the volatility (<code>parameters$ted = 1</code>) and standard normal errors (<code>parameters$errortype = "norm"</code>). For example 2, two exogenous regressors are simulated from a standard normal distribution with <span class="math inline">\(\boldsymbol{\beta} = (0.5, 1.2)'\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5515</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">## definition of general setting and weight matrix</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"spdep"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: sp</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: spData</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>To access larger datasets in this package, install the spDataLarge
+package with: `install.packages('spDataLarge',
+repos='https://nowosad.github.io/drat/', type='source')`</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: sf</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.10.2, GDAL 3.4.2, PROJ 8.2.1; sf_use_s2() is TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"MASS"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"Matrix"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gplots"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'gplots'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    lowess</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"classInt"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> d<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">nb2mat</span>(<span class="fu">cell2nb</span>(d, d, <span class="at">type =</span> <span class="st">"queen"</span>))</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(<span class="fu">Matrix</span>(W))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Dynamic_Spatiotemporal_ARCH_GMM_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Example 1</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>parameters <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>rho   <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>gamma <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>delta <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>ted <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>errortype <span class="ot">&lt;-</span> <span class="st">"norm"</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>beta <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># simulation</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">simulate_dyn_spatiotemporal_ARCH</span>(n, t, <span class="at">W =</span> W, <span class="at">parameters =</span> parameters)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># visualisation</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>colours <span class="ot">&lt;-</span> <span class="fu">colorpanel</span>(<span class="dv">20</span>, <span class="st">"darkblue"</span>,<span class="st">"white"</span>, <span class="st">"darkred"</span>)  </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>colbreaks <span class="ot">&lt;-</span> <span class="fu">classIntervals</span>(sim<span class="sc">$</span>Y, <span class="at">n =</span> <span class="fu">length</span>(colours), <span class="at">style =</span> <span class="st">"quantile"</span>)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># seq(min(sim$Y), max(sim$Y), length = length(colours) + 1)</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfcol =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(<span class="dv">1</span><span class="sc">:</span>d, <span class="dv">1</span><span class="sc">:</span>d, <span class="fu">array</span>(sim<span class="sc">$</span>Y[, <span class="dv">1</span>], <span class="at">dim =</span> <span class="fu">c</span>(d, d)), </span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">col =</span> colours, <span class="at">breaks =</span> colbreaks<span class="sc">$</span>brks, </span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">main =</span> <span class="st">"Observed lattice at t = 1"</span>,</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab =</span> <span class="st">"Dimension 1"</span>, <span class="at">ylab =</span> <span class="st">"Dimension 2"</span>)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span>t, sim<span class="sc">$</span>Y[<span class="dv">1</span>, ], <span class="at">type =</span> <span class="st">"l"</span>, </span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"grey"</span>,</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Observed time series at site s1"</span>, </span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Time"</span>, <span class="at">ylab =</span> <span class="fu">expression</span>(Y[t](s[<span class="dv">1</span>])))</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">1</span><span class="sc">:</span>t, sim<span class="sc">$</span>Y[<span class="dv">1</span>, ], <span class="at">pch =</span> <span class="dv">20</span>,</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> colours[<span class="fu">cut</span>(sim<span class="sc">$</span>Y[<span class="dv">1</span>, ], colbreaks<span class="sc">$</span>brks)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Dynamic_Spatiotemporal_ARCH_GMM_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimation</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">GMM_SDPD_2SLS_ARCH</span>(<span class="at">Y =</span> sim<span class="sc">$</span>Y, <span class="at">X =</span> <span class="cn">NULL</span>, <span class="at">W =</span> W, <span class="at">info =</span> <span class="fu">list</span>(<span class="at">ksy =</span> <span class="dv">10</span>, <span class="at">ksx =</span> <span class="dv">10</span>, <span class="at">stl =</span> <span class="dv">0</span>, <span class="at">tl =</span> <span class="dv">1</span>, <span class="at">ted =</span> <span class="dv">1</span>), <span class="at">silent =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model without exogenous regressors is fitted 
+Number of cross-sectional units: 100 
+Length of the time series: 49 
+Number of spatial lags (weight matrices): 1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># no spatiotemporal lag: info = list(stl = 0)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># temporal lag included: info = list(tl = 1)</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># temporal fixed effects included: info = list(ted = 1)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimated parameters</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>est<span class="sc">$</span>theta <span class="co"># rho, gamma</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]
+[1,] 0.5045788
+[2,] 0.1905222</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard errors</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>est<span class="sc">$</span>std</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  hxw 
+0.14797810 0.01731802 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># t-statistics</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>est<span class="sc">$</span>tstat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]
+[1,]  3.409821
+[2,] 11.001379</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Example 2</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>parameters <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>rho   <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>gamma <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>delta <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>ted <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>errortype <span class="ot">&lt;-</span> <span class="st">"norm"</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>beta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">1.1</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># simulation</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">simulate_dyn_spatiotemporal_ARCH</span>(n, t, <span class="at">W =</span> W, <span class="at">parameters =</span> parameters)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># estimation</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">GMM_SDPD_2SLS_ARCH</span>(<span class="at">Y =</span> sim<span class="sc">$</span>Y, <span class="at">X =</span> sim<span class="sc">$</span>X_regr, <span class="at">W =</span> W, <span class="at">info =</span> <span class="fu">list</span>(<span class="at">ksy =</span> <span class="dv">10</span>, <span class="at">ksx =</span> <span class="dv">10</span>, <span class="at">stl =</span> <span class="dv">1</span>, <span class="at">tl =</span> <span class="dv">1</span>, <span class="at">ted =</span> <span class="dv">1</span>))</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimated parameters</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>est<span class="sc">$</span>theta  <span class="co"># rho, gamma, delta, beta</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]
+[1,] 0.3608249
+[2,] 0.2031233
+[3,] 0.4301851
+[4,] 0.5301658
+[5,] 1.1303935</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard errors</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>est<span class="sc">$</span>std</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 hytl                                  
+0.05702645 0.01468973 0.04088358 0.03191807 0.03208682 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># t-statistics</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>est<span class="sc">$</span>tstat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]
+[1,]  6.327325
+[2,] 13.827571
+[3,] 10.522197
+[4,] 16.610207
+[5,] 35.229220</code></pre>
+</div>
+</div>
+<p>Below, the code for a mini Monte Carlo simulation with <code>m = 10</code> replications is provided.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mini Monte-Carlo simulation</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> d<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">nb2mat</span>(<span class="fu">cell2nb</span>(d, d, <span class="at">type =</span> <span class="st">"queen"</span>))</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Example 1</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>parameters <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>rho   <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>gamma <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>delta <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>ted <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>errortype <span class="ot">&lt;-</span> <span class="st">"norm"</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">$</span>beta <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>, m))</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m){</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>  sim <span class="ot">&lt;-</span> <span class="fu">simulate_dyn_spatiotemporal_ARCH</span>(n, t, <span class="at">W =</span> W, <span class="at">parameters =</span> parameters)</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>  est <span class="ot">&lt;-</span> <span class="fu">GMM_SDPD_2SLS_ARCH</span>(<span class="at">Y =</span> sim<span class="sc">$</span>Y, <span class="at">X =</span> <span class="cn">NULL</span>, <span class="at">W =</span> W, <span class="at">info =</span> <span class="fu">list</span>(<span class="at">ksy =</span> <span class="dv">10</span>, <span class="at">ksx =</span> <span class="dv">10</span>, <span class="at">stl =</span> <span class="dv">0</span>, <span class="at">tl =</span> <span class="dv">1</span>, <span class="at">ted =</span> <span class="dv">0</span>))</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>  results[,i] <span class="ot">&lt;-</span> est<span class="sc">$</span>theta</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">round</span>(i<span class="sc">/</span>m, <span class="dv">2</span>), <span class="st">" | "</span>)</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.1  | 0.2  | 0.3  | 0.4  | 0.5  | 0.6  | 0.7  | 0.8  | 0.9  | 1  | </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfcol =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(results[<span class="dv">1</span>,]), <span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> parameters<span class="sc">$</span>rho, <span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(results[<span class="dv">2</span>,]), <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> parameters<span class="sc">$</span>gamma, <span class="at">col =</span> <span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Dynamic_Spatiotemporal_ARCH_GMM_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
