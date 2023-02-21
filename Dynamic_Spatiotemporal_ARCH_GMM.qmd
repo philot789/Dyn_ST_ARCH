@@ -24,11 +24,15 @@ Geo-referenced data are characterised by an inherent spatial dependence due to t
 
 ## Model
 
-The outcome variable $y_{it}$ of region $i$ at time $t$ is modeled according to \begin{eqnarray}
+The outcome variable $y_{it}$ of region $i$ at time $t$ is modeled according to 
+
+\begin{eqnarray}
 y_{it}      & = & h_{it}^{1/2} \varepsilon_{it},\\
 \log h_{it} & = & \sum_{l=1}^p\sum_{j=1}^n \rho_{l0} m_{l,ij} \log y^2_{jt} + \gamma_0 \log y^2_{i,t-1} + \sum_{l=1}^p\sum_{j=1}^n \delta_{l0} m_{l,ij} \log y^2_{j,t-1} \nonumber \\ 
             &   & \quad + \mathbf{x}^{'}_{it} \boldsymbol{\beta}_0 + \mu_{i0} + \alpha_{t0},
-\end{eqnarray} for $i=1,2,\ldots,n$ and $t=1,\ldots T$. The spatial locations indexed by $i = 1, \ldots, n$ are supposed to be on discrete regular (e.g., for image processes) or irregular lattice, also known as spatial polygons. The latter case is typically present in economics, e.g., regional legal units, districts, countries, etc. Here, $h_{it}$ is considered as the volatility term in region $i$ at time $t$, and $\varepsilon_{it}$ are independent and identically distributed random variables that has mean zero and unit variance. The log-volatility terms follow the process in the equation given above, where $\{m_{l,ij}\}_{l=1}^p$, for $i,j=1,\ldots,n$, are the non-stochastic spatial weights. Here, $p$ is a finite positive integers, and $\{m_{l,ii}\}_{l=1}^p$ are zero for $i=1,\ldots,n$. The spatial, temporal and spatiotemporal effects of the log-squared outcome variable on the log-volatility are measured by the unknown parameters $\gamma_0$, $\{\rho_{l0}\}_{l=1}^p$, and $\{\delta_{l0}\}_{l=1}^q$, respectively. Further, $\mathbf{x}_{it}$ is a $k\times1$ vector of exogenous variables with the associated parameter vector $\boldsymbol{\beta}_0$, and the regional and time fixed effects are denoted by $\boldsymbol{\mu}_0=(\mu_{10},\ldots,\mu_{n0})^{'}$ and $\boldsymbol{\alpha}_0=(\alpha_{10},\ldots,\alpha_{T0})^{'}$. Both $\boldsymbol{\mu}_0$ and $\boldsymbol{\alpha}_0$ can be correlated with the exogenous variables in an arbitrary manner. We assume that the initial value vector $\mathbf{Y}_0=(y_{10},\ldots,y_{n0})^{'}$ is observable.
+\end{eqnarray} 
+
+for $i=1,2,\ldots,n$ and $t=1,\ldots T$. The spatial locations indexed by $i = 1, \ldots, n$ are supposed to be on discrete regular (e.g., for image processes) or irregular lattice, also known as spatial polygons. The latter case is typically present in economics, e.g., regional legal units, districts, countries, etc. Here, $h_{it}$ is considered as the volatility term in region $i$ at time $t$, and $\varepsilon_{it}$ are independent and identically distributed random variables that has mean zero and unit variance. The log-volatility terms follow the process in the equation given above, where $\{m_{l,ij}\}_{l=1}^p$, for $i,j=1,\ldots,n$, are the non-stochastic spatial weights. Here, $p$ is a finite positive integers, and $\{m_{l,ii}\}_{l=1}^p$ are zero for $i=1,\ldots,n$. The spatial, temporal and spatiotemporal effects of the log-squared outcome variable on the log-volatility are measured by the unknown parameters $\gamma_0$, $\{\rho_{l0}\}_{l=1}^p$, and $\{\delta_{l0}\}_{l=1}^q$, respectively. Further, $\mathbf{x}_{it}$ is a $k\times1$ vector of exogenous variables with the associated parameter vector $\boldsymbol{\beta}_0$, and the regional and time fixed effects are denoted by $\boldsymbol{\mu}_0=(\mu_{10},\ldots,\mu_{n0})^{'}$ and $\boldsymbol{\alpha}_0=(\alpha_{10},\ldots,\alpha_{T0})^{'}$. Both $\boldsymbol{\mu}_0$ and $\boldsymbol{\alpha}_0$ can be correlated with the exogenous variables in an arbitrary manner. We assume that the initial value vector $\mathbf{Y}_0=(y_{10},\ldots,y_{n0})^{'}$ is observable.
 
 ## Functions for simulation and estimation
 
@@ -656,8 +660,7 @@ est$tstat
 
 Below, the code for a mini Monte Carlo simulation with `m = 10` replications is provided.
 
-
-```{r}
+``` {r}
 
 # Mini Monte-Carlo simulation
 
@@ -696,6 +699,4 @@ plot(density(results[2,]), col = "blue")
 abline(v = parameters$gamma, col = "blue")
 
 
-
-````
-
+```
