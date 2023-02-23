@@ -13,12 +13,7 @@ Code used in:\
 Dynamic Spatiotemporal ARCH Models (arXiv:2202.13856)\
 Philipp Otto, Osman Dogan, Suleyman Taspinar
 
-Including a toy example how to use the code.
-
-We especially thank Jihai Yu for sharing the MATLAB code used in:\
-Efficient GMM estimation of spatial dynamic panel data models with fixed effects\
-Lung-Fei Lee and Jihai Yu\
-Journal of Econometrics 180(2), 174-197.
+Including two toy examples how to use the code.
 
 ## Abstract
 
